@@ -19,7 +19,7 @@ using namespace std;
    message += "--k Position params\n";
    message += "--l Distance params\n";
    message += "--p Problem\n";
-   message += "--o Number of objectives\n";
+   message += "--m Number of objectives\n";
    message += "Example:\n  ./GenratorU --n 100 --o 3 > 100.dat";
    return message;
 }
