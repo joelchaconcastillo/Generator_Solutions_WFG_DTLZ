@@ -20,7 +20,7 @@ using namespace std;
    message += "--l Distance params\n";
    message += "--p Problem\n";
    message += "--m Number of objectives\n";
-   message += "Example:\n  ./GenratorU --n 100 --o 3 > 100.dat";
+   message += "Example:\n  ./GenratorU --n 100 --m 3 > 100.dat";
    return message;
 }
 int main(int argc, char * argv[])
