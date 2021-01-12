@@ -583,16 +583,11 @@ vector< vector<double> > UniformGenerator::GenerateSolutionminusWFG1(int N, int 
 	RealObj.evaluate(Real, fReal);
 	LightObj.evaluate(Light, fLight);
 
-          //tmp.push_back( RealObj.getXM()-LightObj.getXM() +  fLight[d]);
 	vector<double> tmp;
 	for(int d = 0; d < Obj; d++)
 	{
-//	cout << RealObj.getXM()<<"___"<<LightObj.getXM() <<endl;
           tmp.push_back(2.0*(d+1)-fLight[d]+LightObj.getXM());
-          //tmp.push_back(2.0*(d+1)-fLight[d] - RealObj.getXM()+LightObj.getXM());
-          //tmp.push_back(RealObj.getXM()-LightObj.getXM() +  fLight[d]);
 	}
-//	to_minus(tmp);
 	Points.push_back(tmp);
     }
      vector<vector<double> >out;
@@ -707,7 +702,7 @@ vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ1(int N, int
 {
    vector<vector<double> >out, ref = Hyperplane(N, Obj);
    int k = nvar - Obj + 1;
-   int s = (2.0*(1.0+110*k));
+   int s = (2.0*(1.0+111*k));
    for(auto &r:ref)
       for(int j = 0; j < Obj; j++) r[j] = (0.5-r[j])*s;
      Filter( ref , out);
