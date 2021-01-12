@@ -8,7 +8,7 @@ LDFLAGS=
 UBUNTUFLAGS=-lm $(LDFLAGS) -lstdc++ -std=c++11
 OPENSUSEFLAGS=-lm $(LDFLAGS)
 DEBUG=-O2
-OBJS:=main.o WFG1.o WFG2.o WFG3.o WFG4.o WFG5.o WFG6.o WFG7.o WFG8.o WFG9.o
+OBJS:=main.o WFG1.o WFG2.o WFG3.o
 MAIN= GenratorU
 all:$(MAIN)
 ubuntu:

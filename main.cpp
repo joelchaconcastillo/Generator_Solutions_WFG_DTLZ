@@ -33,7 +33,7 @@ int main(int argc, char * argv[])
 	    exit(0);
 	 }
 
-  int Objectives =2, Vectors = 100, k =2, l=2;
+  int Objectives =2, Vectors = 100, k =2, l=2, nvar=6;
    double delta= 1e-8;
    string Problem = "WFG1";
    for(int i = 1; i < argc ; i++)
@@ -45,6 +45,8 @@ int main(int argc, char * argv[])
 			Objectives = atoi(argv[++i]);
 		else if(Terminal == "--n" )
 			Vectors = atoi(argv[++i]);
+		else if(Terminal == "--nvar" )
+			nvar = atoi(argv[++i]);
 		else if(Terminal == "--k" )
 			k = atoi(argv[++i]);
 		else if(Terminal == "--l" )
@@ -75,17 +77,35 @@ int main(int argc, char * argv[])
   else if( Problem == "WFG3")
      data = Obj.GenerateSolutionWFG3(Vectors, Objectives, k, l);
   else if( Problem == "WFG4")
-     data = Obj.GenerateSolutionWFG4(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "WFG5")
-     data = Obj.GenerateSolutionWFG5(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "WFG6")
-     data = Obj.GenerateSolutionWFG6(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "WFG7")
-     data = Obj.GenerateSolutionWFG7(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "WFG8")
-     data = Obj.GenerateSolutionWFG8(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "WFG9")
-     data = Obj.GenerateSolutionWFG9(Vectors, Objectives, k, l);
+     data = Obj.GenerateSolutionWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG1")
+     data = Obj.GenerateSolutionminusWFG1(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG2")
+     data = Obj.GenerateSolutionminusWFG2(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG3")
+     data = Obj.GenerateSolutionminusWFG3(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG4")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG5")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG6")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG7")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG8")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
+  else if( Problem == "minusWFG9")
+     data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "DTLZ1")
      data = Obj.GenerateSolutionDTLZ1(Vectors, Objectives);
   else if( Problem == "DTLZ2" || Problem == "DTLZ3" || Problem == "DTLZ4" )
@@ -94,6 +114,24 @@ int main(int argc, char * argv[])
      data = Obj.GenerateSolutionDTLZ5_to_DTLZ6(Vectors, Objectives);
   else if( Problem == "DTLZ7")
      data = Obj.GenerateSolutionDTLZ7(Vectors, Objectives);
+  else if( Problem == "BT1" || Problem == "BT2" || Problem == "BT3" || Problem == "BT4" || Problem == "BT6"|| Problem == "BT7" || Problem == "BT8" )
+     data = Obj.GenerateSolutionBT1toBT4andBT6toBT8(Vectors);
+  else if( Problem == "BT5")
+     data = Obj.GenerateSolutionBT5(Vectors);
+  else if( Problem == "BT9")
+     data = Obj.GenerateSolutionBT9(Vectors);
+  else if( Problem == "minusDTLZ1")
+     data = Obj.GenerateSolutionminusDTLZ1(Vectors, Objectives, nvar);
+  else if( Problem == "minusDTLZ2")
+     data = Obj.GenerateSolutionminusDTLZ2(Vectors, Objectives, nvar);
+  else if( Problem == "minusDTLZ3")
+     data = Obj.GenerateSolutionminusDTLZ3(Vectors, Objectives, nvar);
+  else if( Problem == "minusDTLZ4")
+     data = Obj.GenerateSolutionminusDTLZ4(Vectors, Objectives, nvar);
+
+
+
+
 
   for(int i = 0; i < data.size(); i++)
   {

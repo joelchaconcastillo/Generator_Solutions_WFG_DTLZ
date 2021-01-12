@@ -22,13 +22,6 @@ References:
 #include "WFG1.h"
 #include "WFG2.h"
 #include "WFG3.h"
-#include "WFG4.h"
-#include "WFG5.h"
-#include "WFG6.h"
-#include "WFG7.h"
-#include "WFG8.h"
-#include "WFG9.h"
-#define TOL 1e-5
 using namespace std;
 class UniformGenerator
 {
@@ -38,20 +31,27 @@ class UniformGenerator
       vector< vector< double> > Hyperplane(int N, int dim);
       vector< vector<double> > GenerateConcaveRandomPoints(int NPoints, int M, vector<double> &scale);
       void Filter(vector<vector<double> > &N, vector<vector<double > > &R);
+      inline void to_minus(vector<double> &y_obj){ for(int i = 0; i < y_obj.size(); i++) y_obj[i] = -y_obj[i] + 2.0*(i+1)+1.0;}
       vector< vector<double> > GenerateSolutionWFG1(int N, int Obj ,int k, int l);
       vector< vector<double> > GenerateSolutionWFG2(int N, int Obj ,int k, int l);
       vector< vector<double> > GenerateSolutionWFG3(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG4(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG5(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG6(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG7(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG8(int N, int Obj ,int k, int l);
-      vector< vector<double> > GenerateSolutionWFG9(int N, int Obj ,int k, int l);
+      vector< vector<double> > GenerateSolutionWFG4toWFG9(int N, int Obj ,int k, int l);
+      vector< vector<double> > GenerateSolutionminusWFG1(int N, int Obj ,int k, int l);
+      vector< vector<double> > GenerateSolutionminusWFG2(int N, int Obj ,int k, int l);
+      vector< vector<double> > GenerateSolutionminusWFG3(int N, int Obj ,int k, int l);
+      vector< vector<double> > GenerateSolutionminusWFG4toWFG9(int N, int Obj ,int k, int l);
 
       vector< vector<double> > GenerateSolutionDTLZ1(int N, int Obj);
       vector< vector<double> > GenerateSolutionDTLZ2_to_DTLZ4(int N, int Obj);
       vector< vector<double> > GenerateSolutionDTLZ5_to_DTLZ6(int N, int Obj);
       vector< vector<double> > GenerateSolutionDTLZ7(int N, int Obj);
+      vector< vector<double> > GenerateSolutionminusDTLZ1(int N, int Obj, int nvar);
+      vector< vector<double> > GenerateSolutionminusDTLZ2(int N, int Obj, int nvar);
+      vector< vector<double> > GenerateSolutionminusDTLZ3(int N, int Obj, int nvar);
+      vector< vector<double> > GenerateSolutionminusDTLZ4(int N, int Obj, int nvar);
+      vector< vector<double> > GenerateSolutionBT1toBT4andBT6toBT8(int N);
+      vector< vector<double> > GenerateSolutionBT5(int N);
+      vector< vector<double> > GenerateSolutionBT9(int N);
       inline void setDelta(double Delta){this->Delta = Delta;}
       
    private:
@@ -60,11 +60,11 @@ class UniformGenerator
       void GenerateDegenerateRandomPoints(int NPoints, int M);
       double linear(vector<double> &x, int m, int M);
       double concave(vector<double> &x, int m, int M);
+      double convex(vector<double> &x, int m, int M);
       double EuclideanDistance(vector<double> &x, vector<double> &y);
       bool Dominate(vector<double> &A, vector<double> &B);
       void Non_Dominance(vector<vector<double> > &S);
 };
-#endif
 
 UniformGenerator::UniformGenerator()
 {
@@ -180,6 +180,14 @@ double UniformGenerator::concave(vector<double> &x, int m, int M)
    return result;
 
 }
+double UniformGenerator::convex (vector<double> &x, int m, int M) {
+   double result =1.0;
+   for(int i = 1; i <= M-m; i++)
+	result *= sin(x[i-1] * M_PI/2.0 );
+   if( m != 1)
+ 	result *= cos(x[M-m]*M_PI/2.0 );
+   return result;
+}
 double UniformGenerator::linear(vector<double> &x, int m, int M)
 {
    double result = 1.0;
@@ -268,9 +276,7 @@ void UniformGenerator::GenerateDegenerateRandomPoints(int NPoints, int M)
 vector< vector<double> > UniformGenerator::GenerateSolutionWFG1(int N, int Obj ,int k, int l)
 {
 
-    int a =Obj-1, b = 1;// Obj - (Obj%2);
-//		k = 2 * (nObj - 1);
-
+    int a =Obj-1, b = 1;
     vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
     vector< vector<double> > data2 = GenerateQuasiRandom(a, N); 
     vector< vector<double> > Points; 
@@ -295,7 +301,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionWFG1(int N, int Obj ,
 
 	Points.push_back(tmp);
     }
-	if(Delta < TOL) return Points;	
      vector<vector<double> >out;
      Filter(Points, out);
 	
@@ -336,7 +341,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionWFG2(int N, int Obj ,
      Non_Dominance(Points);
 
 
-	if(Delta < TOL) return Points;	
     //limpiar 
      vector<vector<double> >out;
      Filter(Points, out);
@@ -374,7 +378,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionWFG3(int N, int Obj ,
           tmp.push_back( RealObj.getXM()-LightObj.getXM() +  fLight[d]);
 	Points.push_back(tmp);
     }
-	if(Delta < TOL) return Points;	
     //limpiar 
      vector<vector<double> >out;
      Filter(Points, out);
@@ -382,213 +385,23 @@ vector< vector<double> > UniformGenerator::GenerateSolutionWFG3(int N, int Obj ,
 
    return out;
 }
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG4(int N, int Obj ,int k, int l)
+vector< vector<double> > UniformGenerator::GenerateSolutionWFG4toWFG9(int N, int Obj ,int k, int l)
 {
 
-    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
+    vector< vector<double> > data1 = GenerateQuasiRandom(Obj, N); 
     vector< vector<double> > Points; 
-    
-    WFG4 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
     for(int i = 0; i < N; i++)
     {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_4_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
 	vector<double> tmp;
 	for(int m = 1; m <=Obj; m++)
 	{
 	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
+	   tmp.push_back(concave( data1[i], m, Obj)*scale);
 	}
 	Points.push_back(tmp);
     }
-	if(Delta < TOL) return Points;	
-    //limpiar 
      vector<vector<double> >out;
      Filter(Points, out);
-	
-
-   return out;
-}
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG5(int N, int Obj ,int k, int l)
-{
-    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
-    vector< vector<double> > Points; 
-    
-    WFG5 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
-    for(int i = 0; i < N; i++)
-    {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_5_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
-	vector<double> tmp;
-	for(int m = 1; m <=Obj; m++)
-	{
-	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
-	}
-	Points.push_back(tmp);
-    }
-	if(Delta < TOL) return Points;	
-    //limpiar 
-     vector<vector<double> >out;
-     Filter(Points, out);
-	
-
-   return out;
-}
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG6(int N, int Obj ,int k, int l)
-{
-    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
-    vector< vector<double> > Points; 
-    
-    WFG6 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
-    for(int i = 0; i < N; i++)
-    {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_6_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
-	vector<double> tmp;
-	for(int m = 1; m <=Obj; m++)
-	{
-	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
-	}
-	Points.push_back(tmp);
-    }
-	if(Delta < TOL) return Points;	
-    //limpiar 
-     vector<vector<double> >out;
-     Filter(Points, out);
-	
-   return out;
-}
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG7(int N, int Obj ,int k, int l)
-{
-   vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
-    vector< vector<double> > Points; 
-    
-    WFG7 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
-    for(int i = 0; i < N; i++)
-    {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_7_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
-	vector<double> tmp;
-	for(int m = 1; m <=Obj; m++)
-	{
-	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
-	}
-	Points.push_back(tmp);
-    }
-	if(Delta < TOL) return Points;	
-    //limpiar 
-     vector<vector<double> >out;
-     Filter(Points, out);
-	
-
-   return out;
-}
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG8(int N, int Obj ,int k, int l)
-{
-   vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
-    vector< vector<double> > Points; 
-    
-    WFG8 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
-    for(int i = 0; i < N; i++)
-    {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_8_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
-	vector<double> tmp;
-	for(int m = 1; m <=Obj; m++)
-	{
-	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
-	}
-	Points.push_back(tmp);
-    }
-	if(Delta < TOL) return Points;	
-    //limpiar 
-     vector<vector<double> >out;
-     Filter(Points, out);
-	
-   return out;
-}
-vector< vector<double> > UniformGenerator::GenerateSolutionWFG9(int N, int Obj ,int k, int l)
-{
-    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
-    vector< vector<double> > data2 = GenerateQuasiRandom(Obj, N); 
-    vector< vector<double> > Points; 
-    
-    WFG9 RealObj, LightObj;
-
-    RealObj.init(Obj, k, l); 
- //   LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
-     
-    for(int i = 0; i < N; i++)
-    {
-
-	vector<double> fReal(Obj, 0.0);
-	vector<double> Real = RealObj.WFG_9_random_soln(k, l, data1[i]);
-
-	RealObj.evaluate(Real, fReal);
-
-	vector<double> tmp;
-	for(int m = 1; m <=Obj; m++)
-	{
-	   double scale = m*2;
-	   tmp.push_back(  RealObj.getXM() + concave( data2[i], m, Obj)*scale);
-	}
-	Points.push_back(tmp);
-    }
-
-	if(Delta < TOL) return Points;	
-    //limpiar 
-     vector<vector<double> >out;
-     Filter(Points, out);
-	
    return out;
 }
 /**
@@ -597,7 +410,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionWFG9(int N, int Obj ,
 vector< vector<double> > UniformGenerator::GenerateSolutionDTLZ1(int N, int Obj)
 {
    vector<vector<double> >out, ref = Hyperplane(N, Obj) ;
-	if(Delta < TOL) return ref;	
      Filter( ref , out);
    return out;
 }
@@ -615,7 +427,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionDTLZ2_to_DTLZ4(int N,
 	}
 	Nurb.push_back(y);
    }
-  if(Delta < TOL) return Nurb;	
   vector<vector<double> >out;
   Filter(Nurb, out);
   return out;
@@ -670,7 +481,6 @@ vector< vector<double> > UniformGenerator::GenerateSolutionDTLZ7(int N, int Obj)
     }
    Non_Dominance(Points);
 
-  if(Delta < TOL) return Points;	
  vector<vector<double> >out;
   Filter(Points, out);
 
@@ -752,3 +562,212 @@ void UniformGenerator::Non_Dominance(vector<vector<double> > &S)
 	}
 	S=P;
 }
+vector< vector<double> > UniformGenerator::GenerateSolutionminusWFG1(int N, int Obj ,int k, int l)
+{
+    int a =Obj-1, b = 1;
+    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
+    vector< vector<double> > data2 = GenerateQuasiRandom(a, N); 
+    vector< vector<double> > Points; 
+   
+    WFG1 RealObj, LightObj;
+
+    RealObj.init(Obj, k, l); 
+    LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
+     
+    for(int i = 0; i < N; i++)
+    {
+	vector<double> fReal(Obj, 0.0), fLight(Obj,0.0);
+	vector<double> Real = RealObj.WFG_1_random_soln(k, l, data1[i]);
+
+	vector<double> Light = LightObj.WFG_1_random_soln(a, b, data2[i]);
+	RealObj.evaluate(Real, fReal);
+	LightObj.evaluate(Light, fLight);
+
+          //tmp.push_back( RealObj.getXM()-LightObj.getXM() +  fLight[d]);
+	vector<double> tmp;
+	for(int d = 0; d < Obj; d++)
+	{
+//	cout << RealObj.getXM()<<"___"<<LightObj.getXM() <<endl;
+          tmp.push_back(2.0*(d+1)-fLight[d]+LightObj.getXM());
+          //tmp.push_back(2.0*(d+1)-fLight[d] - RealObj.getXM()+LightObj.getXM());
+          //tmp.push_back(RealObj.getXM()-LightObj.getXM() +  fLight[d]);
+	}
+//	to_minus(tmp);
+	Points.push_back(tmp);
+    }
+     vector<vector<double> >out;
+     Filter(Points, out);
+	
+
+   return out;
+
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusWFG2(int N, int Obj ,int k, int l)
+{
+
+    int a =Obj-1, b = 2;// Obj - (Obj%2);
+//		k = 2 * (nObj - 1);
+
+    vector< vector<double> > data1 = GenerateQuasiRandom(k, N); 
+    vector< vector<double> > data2 = GenerateQuasiRandom(a, N); 
+    vector< vector<double> > Points; 
+    
+    WFG2 RealObj, LightObj;
+
+    RealObj.init(Obj, k, l); 
+    LightObj.init(Obj, a, b ); //Se inicializa con el mínimo número de elementos...
+     
+    for(int i = 0; i < N; i++)
+    {
+	vector<double> fReal(Obj, 0.0), fLight(Obj,0.0);
+	vector<double> Real = RealObj.WFG_2_random_soln(k, l, data1[i]);
+
+	vector<double> Light = LightObj.WFG_2_random_soln(a, b, data2[i]);
+
+	RealObj.evaluate(Real, fReal);
+	LightObj.evaluate(Light, fLight);
+
+	vector<double> tmp;
+	for(int d = 0; d < Obj; d++)
+          tmp.push_back(RealObj.getXM()-LightObj.getXM() +  fLight[d] + 1.0); //the maximum Pareto geom is the same than the min + a displacement
+ 	to_minus(tmp); 
+	Points.push_back(tmp);
+	
+    }
+     Non_Dominance(Points);
+    //limpiar 
+     vector<vector<double> >out;
+     Filter(Points, out);
+	
+
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusWFG3(int N, int Obj ,int k, int l)
+{
+  vector<vector<double> >out, ref = Hyperplane(N, Obj);
+   for(auto &r:ref)
+      for(int j = 0; j < Obj; j++) r[j] = (0.5-r[j])*(j+1.0)*4.0; //the max. Pareto geom is not degenerated, instead it is a rotated simplex.
+    Non_Dominance(ref);
+     Filter( ref , out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusWFG4toWFG9(int N, int Obj ,int k, int l)
+{
+    vector< vector<double> > data1 = GenerateQuasiRandom(Obj-1, N); 
+    vector< vector<double> > Points; 
+    for(int i = 0; i < N; i++)
+    {
+	vector<double> tmp;
+	for(int m = 1; m <=Obj; m++)
+	{
+	   double scale = m*2;
+	   tmp.push_back( (1.0-concave( data1[i], m, Obj))*scale);
+	}
+	Points.push_back(tmp);
+    }
+     vector<vector<double> >out;
+     Filter(Points, out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionBT1toBT4andBT6toBT8(int N)
+{
+   vector<vector<double> >out, ref;
+   vector< vector<double> > data = GenerateQuasiRandom(1, N); 
+   for(auto &point:data)
+      ref.push_back({point[0], 1.0-sqrt(point[0])});
+   Filter( ref , out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionBT5(int N)
+{
+   vector<vector<double> >out, ref;
+   vector< vector<double> > data = GenerateQuasiRandom(1, N); 
+   for(auto &f:data)
+      ref.push_back({f[0], (1.0-f[0])*(1.0 - f[0]*sin(8.5*M_PI*f[0]) )  });
+   Non_Dominance(ref);
+   Filter( ref , out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionBT9(int N)
+{
+    vector< vector<double> > data1 = GenerateQuasiRandom(2, N); 
+    vector< vector<double> > Points; 
+    for(int i = 0; i < N; i++)
+    {
+	vector<double> tmp;
+	for(int m = 1; m <=3; m++)
+	   tmp.push_back(concave( data1[i], m, 3));
+	Points.push_back(tmp);
+    }
+     vector<vector<double> >out;
+     Filter(Points, out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ1(int N, int Obj, int nvar)
+{
+   vector<vector<double> >out, ref = Hyperplane(N, Obj);
+   int k = nvar - Obj + 1;
+   int s = (2.0*(1.0+110*k));
+   for(auto &r:ref)
+      for(int j = 0; j < Obj; j++) r[j] = (0.5-r[j])*s;
+     Filter( ref , out);
+   return out;
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ2(int N, int Obj, int nvar)
+{
+  vector< vector<double> > x = GenerateQuasiRandom(Obj, N);
+   vector<double> y(Obj, 0.0);
+   int k = nvar - Obj +1;
+   vector<vector<double> > Nurb;
+   for(int i  = 0; i <  N; i++)
+   {
+	for(int m = 1; m <=Obj; m++)
+	{
+	   y[m-1] =  (1.0-concave(x[i], m, Obj))*(1.0+(k/4.0));
+	}
+	Nurb.push_back(y);
+   }
+  vector<vector<double> >out;
+  Filter(Nurb, out);
+  return out;
+
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ3(int N, int Obj, int nvar)
+{
+  vector< vector<double> > x = GenerateQuasiRandom(Obj, N);
+   vector<double> y(Obj, 0.0);
+   vector<vector<double> > Nurb;
+   int k = nvar - Obj + 1;
+   for(int i  = 0; i <  N; i++)
+   {
+	for(int m = 1; m <=Obj; m++)
+	{
+	   y[m-1] =  (1.0-concave(x[i], m, Obj))*221*k;
+	}
+	Nurb.push_back(y);
+   }
+  vector<vector<double> >out;
+  Filter(Nurb, out);
+  return out;
+
+}
+vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ4(int N, int Obj, int nvar)
+{
+  vector< vector<double> > x = GenerateQuasiRandom(Obj, N);
+   vector<double> y(Obj, 0.0);//, x(M, 0.0);
+   int k = nvar- Obj + 1;
+   vector<vector<double> > Nurb;
+   for(int i  = 0; i <  N; i++)
+   {
+	for(int m = 1; m <=Obj; m++)
+	{
+	   y[m-1] =  (1.0-concave(x[i], m, Obj))*(1.0+(k/4.0));
+	}
+	Nurb.push_back(y);
+   }
+  vector<vector<double> >out;
+  Filter(Nurb, out);
+  return out;
+
+}
+#endif
