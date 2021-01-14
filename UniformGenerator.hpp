@@ -737,7 +737,7 @@ vector< vector<double> > UniformGenerator::GenerateSolutionminusDTLZ3(int N, int
    {
 	for(int m = 1; m <=Obj; m++)
 	{
-	   y[m-1] =  (1.0-concave(x[i], m, Obj))*221*k;
+	   y[m-1] =  (1.0-concave(x[i], m, Obj))*(220.0*k+1.0);
 	}
 	Nurb.push_back(y);
    }
