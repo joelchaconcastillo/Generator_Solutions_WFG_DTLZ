@@ -106,8 +106,19 @@ int main(int argc, char * argv[])
      data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "minusWFG9")
      data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
-  else if( Problem == "DTLZ1" || Problem =="IMB2" || Problem =="IMB8" || Problem =="IMB4" || Problem == "IMB10" || Problem=="IMB6")
+  else if( Problem == "DTLZ1")
      data = Obj.GenerateSolutionDTLZ1(Vectors, Objectives);
+  else if(Problem =="IMB2" || Problem =="IMB8" || Problem =="IMB4" || Problem == "IMB10" || Problem=="IMB6")
+    {
+     data = Obj.GenerateSolutionDTLZ1(Vectors, Objectives);
+	for(auto &point:data)
+	{
+	  for(auto &var:point)
+	  {
+		var *=2.0;
+	  }
+	}
+    } 
   else if( Problem == "DTLZ2" || Problem == "DTLZ3" || Problem == "DTLZ4"||Problem=="IMB5" || Problem =="IMB3"||Problem=="IMB9")
      data = Obj.GenerateSolutionDTLZ2_to_DTLZ4(Vectors, Objectives);
   else if( Problem == "DTLZ5" || Problem == "DTLZ6" )
