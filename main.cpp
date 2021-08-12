@@ -106,15 +106,15 @@ int main(int argc, char * argv[])
      data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
   else if( Problem == "minusWFG9")
      data = Obj.GenerateSolutionminusWFG4toWFG9(Vectors, Objectives, k, l);
-  else if( Problem == "DTLZ1")
+  else if( Problem == "DTLZ1" || Problem =="IMB2" || Problem =="IMB8" || Problem =="IMB4" || Problem == "IMB10" || Problem=="IMB6")
      data = Obj.GenerateSolutionDTLZ1(Vectors, Objectives);
-  else if( Problem == "DTLZ2" || Problem == "DTLZ3" || Problem == "DTLZ4" )
+  else if( Problem == "DTLZ2" || Problem == "DTLZ3" || Problem == "DTLZ4"||Problem=="IMB5" || Problem =="IMB3"||Problem=="IMB9")
      data = Obj.GenerateSolutionDTLZ2_to_DTLZ4(Vectors, Objectives);
   else if( Problem == "DTLZ5" || Problem == "DTLZ6" )
      data = Obj.GenerateSolutionDTLZ5_to_DTLZ6(Vectors, Objectives);
   else if( Problem == "DTLZ7")
      data = Obj.GenerateSolutionDTLZ7(Vectors, Objectives);
-  else if( Problem == "BT1" || Problem == "BT2" || Problem == "BT3" || Problem == "BT4" || Problem == "BT6"|| Problem == "BT7" || Problem == "BT8" )
+  else if( Problem == "BT1" || Problem == "BT2" || Problem == "BT3" || Problem == "BT4" || Problem == "BT6"|| Problem == "BT7" || Problem == "BT8" || Problem == "IMB1" || Problem == "IMB7")
      data = Obj.GenerateSolutionBT1toBT4andBT6toBT8(Vectors);
   else if( Problem == "BT5")
      data = Obj.GenerateSolutionBT5(Vectors);
